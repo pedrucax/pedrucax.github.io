@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano Pedro — Mês 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d; --surface: #161616; --surface2: #1e1e1e; --border: #2a2a2a;
+    --accent: #c8f56a; --accent2: #6af5c8; --accent3: #f5a86a; --accent4: #a78bfa;
+    --text: #f0f0f0; --muted: #888; --danger: #f56a6a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6; min-height: 100vh; }
+
+  .header { padding: 2.5rem 2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
+  .header-left h1 { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; }
+  .header-left p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .header-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 18px; text-align: center; }
+  .badge-box .num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
+  .badge-box .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .badge-box.accent .num { color: var(--accent); }
+  .badge-box.orange .num { color: var(--accent3); }
+
+  .tabs { display: flex; gap: 4px; padding: 1rem 2rem 0; border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab { padding: 10px 18px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border: none; background: transparent; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; white-space: nowrap; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .content { display: none; padding: 2rem; max-width: 900px; }
+  .content.active { display: block; }
+
+  .sh { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 1.8rem 0 .8rem; }
+  .sh:first-child { margin-top: 0; }
+
+  .alert { border-left: 3px solid var(--accent); background: #1a2010; border-radius: 0 10px 10px 0; padding: 12px 16px; font-size: 13px; color: #b0d080; margin-bottom: 1rem; }
+  .alert.warn { border-color: var(--accent3); background: #201810; color: #d0b080; }
+  .alert.info { border-color: var(--accent2); background: #0d1a18; color: #80d0c0; }
+  .alert.purple { border-color: var(--accent4); background: #130d1a; color: #c4b0e8; }
+
+  .mob-reminder { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--accent2); }
+  .mob-reminder span { font-family: 'Syne', sans-serif; font-weight: 700; }
+
+  .treino-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+  .treino-header { display: flex; align-items: center; gap: 12px; padding: 14px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .treino-header:hover { background: var(--surface2); }
+  .t-badge { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; flex-shrink: 0; color: #000; }
+  .treino-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .treino-subtitle { font-size: 12px; color: var(--muted); }
+  .treino-toggle { margin-left: auto; color: var(--muted); font-size: 13px; transition: transform 0.2s; }
+  .treino-body { display: none; padding: 0 18px 14px; border-top: 1px solid var(--border); }
+  .treino-body.open { display: block; }
+
+  .ex-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; gap: 8px; }
+  .ex-row:last-of-type { border-bottom: none; }
+  .ex-left { display: flex; flex-direction: column; gap: 2px; }
+  .ex-name { color: var(--text); }
+  .ex-note { font-size: 11px; color: var(--muted); }
+  .ex-sets { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--accent); white-space: nowrap; margin-left: 8px; flex-shrink: 0; }
+  .ex-tip { font-size: 12px; color: var(--muted); margin-top: 10px; padding: 8px 12px; background: #111; border-radius: 8px; }
+  .section-divider { font-size: 11px; font-family: 'Syne', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent3); padding: 10px 0 4px; border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+
+  /* Progressão */
+  .prog-tabs { display: flex; gap: 6px; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .prog-tab { padding: 6px 14px; font-size: 12px; font-family: 'Syne', sans-serif; font-weight: 600; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+  .prog-tab.active { background: var(--surface2); color: var(--accent); border-color: var(--accent); }
+  .prog-panel { display: none; }
+  .prog-panel.active { display: block; }
+  .ex-prog-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+  .ex-prog-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .ex-prog-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .ex-prog-sets { font-size: 12px; color: var(--muted); }
+  .ex-prog-body { padding: 12px 16px; }
+  .add-entry-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: flex-end; }
+  .inp-group { display: flex; flex-direction: column; gap: 3px; }
+  .inp-group label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .inp-group input { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 7px 10px; width: 90px; outline: none; transition: border 0.15s; }
+  .inp-group input:focus { border-color: var(--accent); }
+  .inp-group input.wide { width: 120px; }
+  .btn-add { padding: 8px 16px; background: var(--accent); color: #000; border: none; border-radius: 8px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; align-self: flex-end; white-space: nowrap; }
+  .btn-add:hover { opacity: 0.85; }
+  .btn-del { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+  .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .hist-table th { text-align: left; padding: 6px 8px; font-size: 11px; color: var(--muted); text-transform: uppercase; border-bottom: 1px solid var(--border); font-weight: 500; }
+  .hist-table td { padding: 7px 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .hist-table tr:last-child td { border-bottom: none; }
+  .hist-table tr:hover td { background: var(--surface2); }
+  .badge-new { background: #1a2a0a; color: var(--accent); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-family: 'Syne', sans-serif; }
+  .badge-pr { background: #2a1a0a; color: var(--accent3); font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 4px; font-family: 'Syne', sans-serif; }
+  .empty-state { text-align: center; padding: 20px; color: var(--muted); font-size: 13px; }
+
+  /* Dieta */
+  .macro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .macro-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+  .macro-card .m-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+  .macro-card .m-value { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
+  .macro-card .m-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .meal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 10px; overflow: hidden; }
+  .meal-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--surface2); gap: 8px; flex-wrap: wrap; cursor: pointer; user-select: none; }
+  .meal-header-left { display: flex; align-items: center; gap: 10px; }
+  .meal-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .meal-meta { display: flex; gap: 12px; align-items: center; }
+  .meal-time { font-size: 12px; color: var(--muted); background: var(--border); padding: 2px 8px; border-radius: 6px; }
+  .meal-kcal { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent3); }
+  .meal-body { padding: 10px 16px; display: none; }
+  .food-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .food-row:last-child { border-bottom: none; }
+  .food-qty { color: var(--muted); font-size: 12px; white-space: nowrap; margin-left: 12px; }
+  .meal-tip { font-size: 12px; color: var(--muted); margin-top: 8px; padding: 8px 12px; background: #111; border-radius: 8px; }
+
+  /* Resumo */
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .stat-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .stat-card .value { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.danger .value { color: var(--danger); }
+  .stat-card.good .value { color: var(--accent); }
+  .stat-card.warn .value { color: var(--accent3); }
+  .goal-table { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1rem; }
+  .goal-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; gap: 8px; }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-lbl { color: var(--muted); flex: 1; }
+  .goal-from { color: var(--muted); font-size: 13px; min-width: 70px; text-align: right; }
+  .arr { color: var(--border); margin: 0 8px; }
+  .goal-to { color: var(--accent); font-weight: 500; min-width: 120px; text-align: right; }
+
+  /* Cronograma */
+  .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .day-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 4px; text-align: center; }
+  .day-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+  .day-icon { font-size: 20px; line-height: 1; margin-bottom: 6px; }
+  .day-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; }
+  .day-box.musculo { border-color: #3a5a1a; background: #111a0a; }
+  .day-box.musculo .day-label { color: var(--accent); }
+  .day-box.bracos { border-color: #3a2a5a; background: #110a1a; }
+  .day-box.bracos .day-label { color: var(--accent4); }
+  .day-box.perna { border-color: #5a1a1a; background: #1a0a0a; }
+  .day-box.perna .day-label { color: var(--danger); }
+  .day-box.cardio { border-color: #1a3a5a; background: #0a111a; }
+  .day-box.cardio .day-label { color: var(--accent2); }
+  .day-box.rest .day-label { color: var(--muted); }
+  .marco-list { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .marco-row { display: flex; gap: 14px; align-items: flex-start; padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .marco-row:last-child { border-bottom: none; }
+  .marco-week { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--accent); white-space: nowrap; min-width: 70px; }
+  .marco-desc { color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .week-grid { grid-template-columns: repeat(4, 1fr); }
+    .header { flex-direction: column; align-items: flex-start; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .macro-grid { grid-template-columns: repeat(2, 1fr); }
+    .inp-group input { width: 75px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Plano Pedro Lucas</h1>
+    <p>Mês 3 · Início: 30/06/2026 · Reavaliação: 30/07/2026</p>
+  </div>
+  <div class="header-badges">
+    <div class="badge-box accent">
+      <div class="num">—</div>
+      <div class="lbl">InBody Score</div>
+    </div>
+    <div class="badge-box orange">
+      <div class="num" id="countdown-num">—</div>
+      <div class="lbl">dias p/ reavaliação</div>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('treino', this)">Treinos</button>
+  <button class="tab" onclick="switchTab('progressao', this)">Progressão de Carga</button>
+  <button class="tab" onclick="switchTab('dieta', this)">Dieta</button>
+  <button class="tab" onclick="switchTab('cronograma', this)">Cronograma</button>
+  <button class="tab" onclick="switchTab('resumo', this)">Resumo & Metas</button>
+</div>
+
+<!-- TREINOS -->
+<div id="treino" class="content active">
+  <div class="mob-reminder">🧘 <span>Mobilidade & Alongamento — faça em todo treino</span></div>
+  <div class="alert purple">💡 Mês 3 — 5 dias fixos. Peito 2x por semana para acelerar crescimento. Ordem dos exercícios pensada para não comprometer performance entre grupos musculares.</div>
+
+  <!-- TREINO A -->
+  <div class="sh">Treino A — Peito & Tríceps · Segunda</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--accent);">A</div>
+      <div><div class="treino-title">Peito & Tríceps</div><div class="treino-subtitle">Segunda-feira · ~65 min</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="section-divider">Peito</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Supino reto com barra</span><span class="ex-note">exercício base — máxima carga, máximo recrutamento</span></div>
+        <span class="ex-sets">4×6–8</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Supino inclinado na máquina ou Smith</span><span class="ex-note">peitoral superior — foco na contração no topo</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Crossover no cabo (polia alta)</span><span class="ex-note">adução do peitoral — braços se cruzam levemente na frente</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Peck Deck</span><span class="ex-note">isolamento final — pause 1 seg na contração</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="section-divider">Tríceps</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Tríceps pulley barra reta</span><span class="ex-note">pegada pronada — cotovelos fixos no corpo</span></div>
+        <span class="ex-sets">3×12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Tríceps testa com barra EZ</span><span class="ex-note">cabeça longa — fundamental para volume do braço</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-tip">💡 Supino reto com menos reps (6–8) e mais carga — é a evolução do mês anterior. Tríceps por último pois já trabalhou no supino. Descanso 90 seg nos compostos, 60 seg nos isolamentos.</div>
+    </div>
+  </div>
+
+  <!-- TREINO B -->
+  <div class="sh">Treino B — Costas & Bíceps · Terça</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--accent2);">B</div>
+      <div><div class="treino-title">Costas & Bíceps</div><div class="treino-subtitle">Terça-feira · ~65 min</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="section-divider">Costas</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Puxada frontal na polia (pegada larga)</span><span class="ex-note">largura das costas — cotovelo desce para baixo e para trás</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Remada curvada com barra (ou Smith acima de 45kg)</span><span class="ex-note">espessura das costas — tronco a 45°, cotovelo para trás</span></div>
+        <span class="ex-sets">4×8–10</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Remada cavalinho (máquina)</span><span class="ex-note">estável — foco em retrair a escápula no final</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Puxada na polia (pegada neutra/supinada)</span><span class="ex-note">ângulo diferente — ativa mais o bíceps e dorsal inferior</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="section-divider">Bíceps</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Rosca direta com barra</span><span class="ex-note">base do bíceps — cotovelo fixo, sem balanço</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Rosca concentrada com halter</span><span class="ex-note">pico do bíceps — cotovelo apoiado na coxa</span></div>
+        <span class="ex-sets">3×12 cada</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Rosca inversa (barra ou cabo)</span><span class="ex-note">antebraço e braquiorradial — fortalece o grip progressivamente</span></div>
+        <span class="ex-sets">2×12–15</span>
+      </div>
+      <div class="ex-tip">💡 Use straps nos exercícios de costas — libera o antebraço para focar nas costas. Bíceps por último pois já trabalhou nas puxadas. Rosca inversa no final, leve.</div>
+    </div>
+  </div>
+
+  <!-- TREINO C -->
+  <div class="sh">Treino C — Ombro & Braços · Quarta</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--accent4);">C</div>
+      <div><div class="treino-title">Ombro & Braços</div><div class="treino-subtitle">Quarta-feira · ~60 min</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="section-divider">Ombro</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Desenvolvimento na máquina</span><span class="ex-note">deltoid anterior e medial — base do ombro, maior carga</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Elevação lateral na máquina</span><span class="ex-note">deltoid medial — responsável pela largura do ombro</span></div>
+        <span class="ex-sets">4×12–15</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Remada com corda na polia baixa</span><span class="ex-note">cotovelo sobe diagonal e abre no topo — deltoid posterior + manguito</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="section-divider">Bíceps</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Rosca scott na máquina</span><span class="ex-note">cotovelo fixo — isolamento puro, sem compensação</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Rosca martelo sentado (simultâneo)</span><span class="ex-note">braquial e braquiorradial — espessura do braço</span></div>
+        <span class="ex-sets">3×12</span>
+      </div>
+      <div class="section-divider">Tríceps</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Tríceps corda no cabo</span><span class="ex-note">abre a corda na descida — cabeça lateral</span></div>
+        <span class="ex-sets">4×12–15</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Tríceps francês com halter</span><span class="ex-note">cabeça longa — volume total do braço</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-tip">💡 Ordem inteligente: desenvolvimento primeiro (mais pesado, ombro fresco), elevação lateral, remada corda. Depois bíceps (frescos, não foram usados hoje), tríceps por último. Descanso 60 seg.</div>
+    </div>
+  </div>
+
+  <!-- TREINO D -->
+  <div class="sh">Treino D — Peito & Tríceps · Quinta</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--accent);">D</div>
+      <div><div class="treino-title">Peito & Tríceps</div><div class="treino-subtitle">Quinta-feira · ~60 min · 2ª frequência</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="section-divider">Peito</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Supino inclinado na máquina ou Smith</span><span class="ex-note">começa pelo inclinado — ênfase no peitoral superior</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Supino reto na máquina</span><span class="ex-note">peitoral médio — variação do movimento sem instabilidade</span></div>
+        <span class="ex-sets">3×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Crossover no cabo (polia baixa)</span><span class="ex-note">ângulo diferente do crossover de segunda — peitoral superior</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="section-divider">Tríceps</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Tríceps pulley corda</span><span class="ex-note">diferente da barra reta de segunda — estímulo complementar</span></div>
+        <span class="ex-sets">3×12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Mergulho entre bancos (tríceps)</span><span class="ex-note">peso corporal — cotovelos para trás, não para os lados</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="ex-tip">💡 2ª frequência de peito — exercícios diferentes de segunda para variar o ângulo. Crossover da polia baixa sobe em direção ao queixo (peitoral superior). Tríceps com exercícios diferentes de segunda também.</div>
+    </div>
+  </div>
+
+  <!-- TREINO E -->
+  <div class="sh">Treino E — Posterior, Glúteo, Lombar & Core · Sexta</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--danger);">E</div>
+      <div><div class="treino-title">Posterior, Glúteo, Lombar & Core</div><div class="treino-subtitle">Sexta-feira · ~65 min</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="section-divider">Glúteo</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Hip Thrust na máquina</span><span class="ex-note">maior ativação de glúteo que existe — empurra o quadril para cima, contrai no topo</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Abdutora na máquina</span><span class="ex-note">glúteo médio — importante para largura e estabilidade</span></div>
+        <span class="ex-sets">3×15</span>
+      </div>
+      <div class="section-divider">Posterior de Coxa</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Stiff com halteres</span><span class="ex-note">joelhos quase travados — sinta o alongamento no isquiotibial</span></div>
+        <span class="ex-sets">4×10–12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Cadeira flexora (Leg Curl)</span><span class="ex-note">isquiotibial — contrai forte no topo, desce controlado</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="section-divider">Quad & Panturrilha</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Leg Press 45°</span><span class="ex-note">quad e glúteo — pés na largura dos ombros, posição neutra</span></div>
+        <span class="ex-sets">3×12</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Cadeira extensora</span><span class="ex-note">isolamento do quad — pause 1 seg no topo</span></div>
+        <span class="ex-sets">3×15</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Panturrilha em pé na máquina</span><span class="ex-note">gastrocnêmio — amplitude total, sobe e desce devagar</span></div>
+        <span class="ex-sets">4×15–20</span>
+      </div>
+      <div class="section-divider">Lombar & Core</div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Hiperextensão lombar (banco romano)</span><span class="ex-note">para no paralelo ao chão — não hiperestenda</span></div>
+        <span class="ex-sets">3×12–15</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Crunch na máquina</span><span class="ex-note">enrola o tronco em direção aos joelhos — não puxa com pescoço</span></div>
+        <span class="ex-sets">3×15</span>
+      </div>
+      <div class="ex-tip">💡 Hip thrust abre o treino com glúteo fresco. Leg Press e extensora cobrem o quad que estava sem estímulo. Lombar e core sempre no final. Descanso 2 min no Leg Press.</div>
+    </div>
+  </div>
+
+  <!-- CARDIO -->
+  <div class="sh">Cardio · Sábado</div>
+  <div class="treino-card">
+    <div class="treino-header" onclick="toggleTreino(this)">
+      <div class="t-badge" style="background:var(--accent2);font-size:18px;">🏃</div>
+      <div><div class="treino-title">Cardio — foco em secar a barriga</div><div class="treino-subtitle">Sábado · 30–40 min</div></div>
+      <div class="treino-toggle">▼</div>
+    </div>
+    <div class="treino-body">
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Esteira em inclinação (5–8%) — ritmo moderado</span><span class="ex-note">zona de queima de gordura — consegue falar mas sente o esforço</span></div>
+        <span class="ex-sets">35–40 min</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">Bike ergométrica cadência constante</span><span class="ex-note">alternativa à esteira — mesma zona de esforço</span></div>
+        <span class="ex-sets">35–40 min</span>
+      </div>
+      <div class="ex-row">
+        <div class="ex-left"><span class="ex-name">HIIT: 30 seg sprint / 90 seg caminhada</span><span class="ex-note">mais intenso — use no máximo 2x por semana</span></div>
+        <span class="ex-sets">8–10 ciclos</span>
+      </div>
+      <div class="ex-tip">💡 Para secar a barriga o cardio de intensidade moderada e longa duração (35–40 min) é mais eficiente que HIIT curto. Se tiver bike em casa em algum momento, use — você já sabe que funciona para você.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESSÃO -->
+<div id="progressao" class="content">
+  <div class="alert info">📈 Registre peso e repetições após cada treino. Dados salvos no navegador. PR aparece automaticamente.</div>
+  <div class="prog-tabs">
+    <button class="prog-tab active" onclick="switchProgTab('progA', this)">Treino A</button>
+    <button class="prog-tab" onclick="switchProgTab('progB', this)">Treino B</button>
+    <button class="prog-tab" onclick="switchProgTab('progC', this)">Treino C</button>
+    <button class="prog-tab" onclick="switchProgTab('progD', this)">Treino D</button>
+    <button class="prog-tab" onclick="switchProgTab('progE', this)">Treino E</button>
+  </div>
+  <div id="progA" class="prog-panel active">
+    <div id="exA1" class="ex-prog-block"></div><div id="exA2" class="ex-prog-block"></div>
+    <div id="exA3" class="ex-prog-block"></div><div id="exA4" class="ex-prog-block"></div>
+    <div id="exA5" class="ex-prog-block"></div><div id="exA6" class="ex-prog-block"></div>
+  </div>
+  <div id="progB" class="prog-panel">
+    <div id="exB1" class="ex-prog-block"></div><div id="exB2" class="ex-prog-block"></div>
+    <div id="exB3" class="ex-prog-block"></div><div id="exB4" class="ex-prog-block"></div>
+    <div id="exB5" class="ex-prog-block"></div><div id="exB6" class="ex-prog-block"></div>
+    <div id="exB7" class="ex-prog-block"></div>
+  </div>
+  <div id="progC" class="prog-panel">
+    <div id="exC1" class="ex-prog-block"></div><div id="exC2" class="ex-prog-block"></div>
+    <div id="exC3" class="ex-prog-block"></div><div id="exC4" class="ex-prog-block"></div>
+    <div id="exC5" class="ex-prog-block"></div><div id="exC6" class="ex-prog-block"></div>
+    <div id="exC7" class="ex-prog-block"></div>
+  </div>
+  <div id="progD" class="prog-panel">
+    <div id="exD1" class="ex-prog-block"></div><div id="exD2" class="ex-prog-block"></div>
+    <div id="exD3" class="ex-prog-block"></div><div id="exD4" class="ex-prog-block"></div>
+    <div id="exD5" class="ex-prog-block"></div>
+  </div>
+  <div id="progE" class="prog-panel">
+    <div id="exE1" class="ex-prog-block"></div><div id="exE2" class="ex-prog-block"></div>
+    <div id="exE3" class="ex-prog-block"></div><div id="exE4" class="ex-prog-block"></div>
+    <div id="exE5" class="ex-prog-block"></div><div id="exE6" class="ex-prog-block"></div>
+    <div id="exE7" class="ex-prog-block"></div><div id="exE8" class="ex-prog-block"></div>
+    <div id="exE9" class="ex-prog-block"></div>
+  </div>
+</div>
+
+<!-- DIETA -->
+<div id="dieta" class="content">
+  <div class="sh">Macros diários</div>
+  <div class="macro-grid">
+    <div class="macro-card"><div class="m-label">Calorias</div><div class="m-value">2.150</div><div class="m-sub">kcal / dia</div></div>
+    <div class="macro-card"><div class="m-label">Proteína</div><div class="m-value">175g</div><div class="m-sub">~2g/kg de peso</div></div>
+    <div class="macro-card"><div class="m-label">Carboidrato</div><div class="m-value">220g</div><div class="m-sub">energia e treino</div></div>
+    <div class="macro-card"><div class="m-label">Gordura</div><div class="m-value">65g</div><div class="m-sub">hormônios e saúde</div></div>
+  </div>
+  <div class="alert">✅ Você está no caminho certo — iogurte grego com morango, menos doce, mais água. Continue assim sem precisar contar caloria.</div>
+  <div class="alert warn">🎯 Para secar a barriga: a maior alavanca é reduzir carboidrato no jantar quando não treinou. Proteína e vegetais à vontade, arroz e batata com moderação à noite.</div>
+
+  <div class="sh">Cardápio — sua rotina real</div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">🍳</span><span class="meal-name">1ª Refeição — Almoço</span></div>
+      <div class="meal-meta"><span class="meal-time">11h30 – 12h</span><span class="meal-kcal">~650 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Peito de frango, carne moída ou lombo</span><span class="food-qty">180–200g</span></div>
+      <div class="food-row"><span>Arroz branco ou integral</span><span class="food-qty">4 col. sopa</span></div>
+      <div class="food-row"><span>Feijão ou lentilha</span><span class="food-qty">1 concha média</span></div>
+      <div class="food-row"><span>Salada à vontade</span><span class="food-qty">livre</span></div>
+      <div class="food-row"><span>Azeite de oliva extra virgem</span><span class="food-qty">1 col. sopa</span></div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">🍫</span><span class="meal-name">Sobremesa controlada</span></div>
+      <div class="meal-meta"><span class="meal-time">logo após o almoço</span><span class="meal-kcal">~80 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Chocolate meio amargo (70%+) ou iogurte grego com morango</span><span class="food-qty">2–3 quad. / 1 pote</span></div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">⚡</span><span class="meal-name">Pré-treino</span></div>
+      <div class="meal-meta"><span class="meal-time">30–40 min antes</span><span class="meal-kcal">~300 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Banana</span><span class="food-qty">1 unidade</span></div>
+      <div class="food-row"><span>Aveia em flocos</span><span class="food-qty">3 col. sopa</span></div>
+      <div class="food-row"><span>Whey protein ou iogurte grego</span><span class="food-qty">1 dose / 200g</span></div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">🥪</span><span class="meal-name">Pós-treino / Lanche</span></div>
+      <div class="meal-meta"><span class="meal-time">16h – 17h</span><span class="meal-kcal">~450 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Pão com frango desfiado</span><span class="food-qty">opção 1</span></div>
+      <div class="food-row"><span>Misto quente com peito de frango</span><span class="food-qty">opção 2</span></div>
+      <div class="food-row"><span>Tapioca com frango + queijo minas</span><span class="food-qty">opção 3</span></div>
+      <div class="food-row"><span>Pão de queijo (2 un.) + ovo cozido ou whey</span><span class="food-qty">opção 4</span></div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">🌙</span><span class="meal-name">Jantar</span></div>
+      <div class="meal-meta"><span class="meal-time">19h – 20h</span><span class="meal-kcal">~500 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Frango, lombo ou carne moída</span><span class="food-qty">180–200g</span></div>
+      <div class="food-row"><span>Legumes refogados à vontade</span><span class="food-qty">livre</span></div>
+      <div class="food-row"><span>Arroz ou batata-doce (reduzir em dias sem treino)</span><span class="food-qty">2–3 col. sopa</span></div>
+      <div class="meal-tip">💡 Para secar a barriga: nos dias sem treino reduza o carboidrato do jantar pela metade. Proteína e vegetais sem restrição.</div>
+    </div>
+  </div>
+  <div class="meal">
+    <div class="meal-header" onclick="toggleMeal(this)">
+      <div class="meal-header-left"><span style="font-size:20px;">🌜</span><span class="meal-name">Ceia</span></div>
+      <div class="meal-meta"><span class="meal-time">22h – 23h</span><span class="meal-kcal">~200 kcal</span><span style="color:var(--muted)">▼</span></div>
+    </div>
+    <div class="meal-body">
+      <div class="food-row"><span>Iogurte grego com morango</span><span class="food-qty">1 pote + frutas</span></div>
+      <div class="food-row"><span>Magic toast de cacau ou sucrilhos natural</span><span class="food-qty">à gosto</span></div>
+      <div class="food-row"><span>Pasta de amendoim (opcional)</span><span class="food-qty">1 col. chá</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CRONOGRAMA -->
+<div id="cronograma" class="content">
+  <div class="sh">Semana modelo — 5 dias fixos</div>
+  <div class="week-grid">
+    <div class="day-box musculo"><div class="day-name">seg</div><div class="day-icon">💪</div><div class="day-label">Treino A</div></div>
+    <div class="day-box musculo"><div class="day-name">ter</div><div class="day-icon">🔙</div><div class="day-label">Treino B</div></div>
+    <div class="day-box bracos"><div class="day-name">qua</div><div class="day-icon">💜</div><div class="day-label">Treino C</div></div>
+    <div class="day-box musculo"><div class="day-name">qui</div><div class="day-icon">💪</div><div class="day-label">Treino D</div></div>
+    <div class="day-box perna"><div class="day-name">sex</div><div class="day-icon">🦵</div><div class="day-label">Treino E</div></div>
+    <div class="day-box cardio"><div class="day-name">sáb</div><div class="day-icon">🏃</div><div class="day-label">Cardio</div></div>
+    <div class="day-box rest"><div class="day-name">dom</div><div class="day-icon">😴</div><div class="day-label">Descanso</div></div>
+  </div>
+
+  <div class="alert purple">💡 Lógica da semana: peito segunda e quinta (2x), bíceps terça e quarta (2x), tríceps segunda, quarta e quinta (3x), ombro só quarta mas com volume dedicado. Nenhum dia compromete o seguinte.</div>
+
+  <div class="sh">Marcos do Mês 3</div>
+  <div class="marco-list">
+    <div class="marco-row"><span class="marco-week">Semana 1</span><span class="marco-desc">Adaptar ao 5º dia. Hip thrust — começar leve para dominar o movimento antes de carregar.</span></div>
+    <div class="marco-row"><span class="marco-week">Semana 2</span><span class="marco-desc">Progredir cargas no supino (foco em 6–8 reps pesadas). Registrar tudo na Progressão de Carga.</span></div>
+    <div class="marco-row"><span class="marco-week">Semana 3</span><span class="marco-desc">Avaliar se o volume de peito está gerando pump e progressão. Ajustar cardio se necessário.</span></div>
+    <div class="marco-row"><span class="marco-week">Semana 4</span><span class="marco-desc">Refazer bioimpedância em 30/07 e trazer aqui para análise e montagem do Mês 4.</span></div>
+  </div>
+  <div class="alert" style="margin-top:1rem;">📊 Reavaliação: 30/07/2026 — traga a bioimpedância para análise completa e ajuste do Mês 4.</div>
+</div>
+
+<!-- RESUMO -->
+<div id="resumo" class="content">
+  <div class="sh">Evolução desde o início</div>
+  <div class="stat-grid">
+    <div class="stat-card good"><div class="label">Peso inicial</div><div class="value">92,4</div><div class="sub">kg · Abril 2026</div></div>
+    <div class="stat-card good"><div class="label">Peso atual</div><div class="value">86,0</div><div class="sub">kg · Junho 2026</div></div>
+    <div class="stat-card good"><div class="label">Total perdido</div><div class="value">−6,4</div><div class="sub">kg em 2 meses</div></div>
+    <div class="stat-card warn"><div class="label">InBody Score</div><div class="value">70</div><div class="sub">aguarda nova avaliação</div></div>
+    <div class="stat-card danger"><div class="label">Gordura Visceral</div><div class="value">Nível 11</div><div class="sub">meta: abaixo de 9</div></div>
+    <div class="stat-card"><div class="label">Reavaliação</div><div class="value">30/07</div><div class="sub">próxima bioimpedância</div></div>
+  </div>
+  <div class="sh">Metas — Mês 3</div>
+  <div class="goal-table">
+    <div class="goal-row"><span class="goal-lbl">Peso</span><span class="goal-from">~86 kg</span><span class="arr">→</span><span class="goal-to">~83–84 kg</span></div>
+    <div class="goal-row"><span class="goal-lbl">Massa de gordura</span><span class="goal-from">estimada ~24 kg</span><span class="arr">→</span><span class="goal-to">~21–22 kg</span></div>
+    <div class="goal-row"><span class="goal-lbl">Gordura visceral</span><span class="goal-from">Nível 11</span><span class="arr">→</span><span class="goal-to">Nível 8–9</span></div>
+    <div class="goal-row"><span class="goal-lbl">Peito</span><span class="goal-from">visual atual</span><span class="arr">→</span><span class="goal-to">diferença visível com 2x/semana</span></div>
+    <div class="goal-row"><span class="goal-lbl">Barriga</span><span class="goal-from">gordura projetada</span><span class="arr">→</span><span class="goal-to">redução visível com cardio + dieta</span></div>
+  </div>
+  <div class="alert warn">⚠️ Após a bioimpedância de 30/07, traga os dados aqui — atualizamos os números reais e montamos o Mês 4.</div>
+</div>
+
+<script>
+function updateCountdown() {
+  const target = new Date('2026-07-30');
+  const today = new Date(); today.setHours(0,0,0,0); target.setHours(0,0,0,0);
+  const diff = Math.round((target - today) / (1000*60*60*24));
+  const el = document.getElementById('countdown-num');
+  if (!el) return;
+  if (diff <= 0) { el.textContent = 'HOJE'; el.style.fontSize='1.1rem'; }
+  else el.textContent = diff;
+}
+updateCountdown();
+
+const EXERCISES = {
+  A: [
+    { id:'A1', name:'Supino reto com barra', sets:'4×6–8' },
+    { id:'A2', name:'Supino inclinado (máquina/Smith)', sets:'3×10–12' },
+    { id:'A3', name:'Crossover no cabo (polia alta)', sets:'3×12–15' },
+    { id:'A4', name:'Peck Deck', sets:'3×12–15' },
+    { id:'A5', name:'Tríceps pulley barra reta', sets:'3×12' },
+    { id:'A6', name:'Tríceps testa com barra EZ', sets:'3×10–12' },
+  ],
+  B: [
+    { id:'B1', name:'Puxada frontal (pegada larga)', sets:'4×10–12' },
+    { id:'B2', name:'Remada curvada com barra / Smith', sets:'4×8–10' },
+    { id:'B3', name:'Remada cavalinho (máquina)', sets:'3×10–12' },
+    { id:'B4', name:'Puxada pegada neutra/supinada', sets:'3×10–12' },
+    { id:'B5', name:'Rosca direta com barra', sets:'3×10–12' },
+    { id:'B6', name:'Rosca concentrada com halter', sets:'3×12 cada' },
+    { id:'B7', name:'Rosca inversa', sets:'2×12–15' },
+  ],
+  C: [
+    { id:'C1', name:'Desenvolvimento na máquina', sets:'4×10–12' },
+    { id:'C2', name:'Elevação lateral na máquina', sets:'4×12–15' },
+    { id:'C3', name:'Remada com corda na polia baixa', sets:'3×12–15' },
+    { id:'C4', name:'Rosca scott na máquina', sets:'4×10–12' },
+    { id:'C5', name:'Rosca martelo sentado', sets:'3×12' },
+    { id:'C6', name:'Tríceps corda no cabo', sets:'4×12–15' },
+    { id:'C7', name:'Tríceps francês com halter', sets:'3×10–12' },
+  ],
+  D: [
+    { id:'D1', name:'Supino inclinado (máquina/Smith)', sets:'4×10–12' },
+    { id:'D2', name:'Supino reto na máquina', sets:'3×10–12' },
+    { id:'D3', name:'Crossover no cabo (polia baixa)', sets:'3×12–15' },
+    { id:'D4', name:'Tríceps pulley corda', sets:'3×12' },
+    { id:'D5', name:'Mergulho entre bancos', sets:'3×12–15' },
+  ],
+  E: [
+    { id:'E1', name:'Hip Thrust na máquina', sets:'4×10–12' },
+    { id:'E2', name:'Abdutora na máquina', sets:'3×15' },
+    { id:'E3', name:'Stiff com halteres', sets:'4×10–12' },
+    { id:'E4', name:'Cadeira flexora (Leg Curl)', sets:'3×12–15' },
+    { id:'E5', name:'Leg Press 45°', sets:'3×12' },
+    { id:'E6', name:'Cadeira extensora', sets:'3×15' },
+    { id:'E7', name:'Panturrilha em pé na máquina', sets:'4×15–20' },
+    { id:'E8', name:'Hiperextensão lombar', sets:'3×12–15' },
+    { id:'E9', name:'Crunch na máquina', sets:'3×15' },
+  ],
+};
+
+function saveData(k,v){try{localStorage.setItem('pedro3_'+k,JSON.stringify(v));}catch(e){}}
+function loadData(k){try{const d=localStorage.getItem('pedro3_'+k);return d?JSON.parse(d):[];}catch(e){return[];}}
+
+function renderExercise(ex) {
+  const el = document.getElementById('ex'+ex.id); if(!el) return;
+  const entries = loadData(ex.id);
+  const maxW = entries.length ? Math.max(...entries.map(e=>parseFloat(e.weight)||0)) : 0;
+  let hist = entries.length===0
+    ? '<div class="empty-state">Nenhum registro ainda.</div>'
+    : '<table class="hist-table"><thead><tr><th>Data</th><th>Carga</th><th>Reps</th><th>Obs</th><th></th></tr></thead><tbody>'
+      + entries.slice().reverse().map((e,ri)=>{
+          const idx=entries.length-1-ri;
+          const pr=parseFloat(e.weight)===maxW&&maxW>0;
+          return `<tr><td>${e.date}${ri===0?'<span class="badge-new">HOJE</span>':''}</td>
+            <td>${e.weight}kg${pr?'<span class="badge-pr">PR</span>':''}</td>
+            <td>${e.reps}</td><td style="color:var(--muted);font-size:12px">${e.obs||'—'}</td>
+            <td><button class="btn-del" onclick="deleteEntry('${ex.id}',${idx})">✕</button></td></tr>`;
+        }).join('') + '</tbody></table>';
+  el.innerHTML = `<div class="ex-prog-header"><span class="ex-prog-name">${ex.name}</span><span class="ex-prog-sets">${ex.sets}</span></div>
+    <div class="ex-prog-body">
+      <div class="add-entry-row">
+        <div class="inp-group"><label>Data</label><input type="date" id="date_${ex.id}" class="wide" value="${todayStr()}"></div>
+        <div class="inp-group"><label>Carga (kg)</label><input type="number" id="weight_${ex.id}" placeholder="ex: 60" min="0" step="0.5"></div>
+        <div class="inp-group"><label>Reps feitas</label><input type="text" id="reps_${ex.id}" placeholder="ex: 10"></div>
+        <div class="inp-group"><label>Obs</label><input type="text" id="obs_${ex.id}" class="wide" placeholder="fácil, pesado..."></div>
+        <button class="btn-add" onclick="addEntry('${ex.id}')">+ Salvar</button>
+      </div>${hist}</div>`;
+}
+
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function formatDate(iso){if(!iso)return'';const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`;}
+
+function addEntry(exId) {
+  const date=document.getElementById('date_'+exId).value||todayStr();
+  const weight=document.getElementById('weight_'+exId).value.trim();
+  const reps=document.getElementById('reps_'+exId).value.trim();
+  const obs=document.getElementById('obs_'+exId).value.trim();
+  if(!weight||!reps){alert('Preencha a carga e as reps!');return;}
+  const entries=loadData(exId);
+  entries.push({date:formatDate(date),weight,reps,obs});
+  saveData(exId,entries);
+  EXERCISES[exId.charAt(0)].forEach(ex=>renderExercise(ex));
+}
+
+function deleteEntry(exId,idx) {
+  if(!confirm('Remover?'))return;
+  const entries=loadData(exId); entries.splice(idx,1); saveData(exId,entries);
+  EXERCISES[exId.charAt(0)].forEach(ex=>renderExercise(ex));
+}
+
+function initProgressao(){Object.values(EXERCISES).flat().forEach(ex=>renderExercise(ex));}
+
+const progKeyMap={progA:'A',progB:'B',progC:'C',progD:'D',progE:'E'};
+
+function switchTab(id,el) {
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); el.classList.add('active');
+  if(id==='progressao') initProgressao();
+}
+
+function switchProgTab(id,el) {
+  document.querySelectorAll('.prog-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.prog-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active'); el.classList.add('active');
+  EXERCISES[progKeyMap[id]].forEach(ex=>renderExercise(ex));
+}
+
+function toggleTreino(header) {
+  const body=header.nextElementSibling;
+  const toggle=header.querySelector('.treino-toggle');
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  toggle.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
+}
+
+function toggleMeal(header) {
+  const body=header.nextElementSibling;
+  const arrow=header.querySelector('.meal-meta span:last-child');
+  const isOpen=body.style.display==='block';
+  body.style.display=isOpen?'none':'block';
+  if(arrow) arrow.style.transform=isOpen?'rotate(0deg)':'rotate(180deg)';
+}
+</script>
+</body>
+</html>
